@@ -2,8 +2,11 @@
 
 import psycopg2
 
-
+#query is the cursor object of database
 def popularArticles(query):
+    '''This method prints list of most
+    popular articles in news database.'''
+    
     article_query='''select title, rslt.count from (
         select path, count(path) from (
             select * from log where status = '200 OK' and path != '/'
@@ -18,6 +21,8 @@ def popularArticles(query):
     print("-" * 80)
 
 def popularAuthors(query):
+    '''This method prints list of most
+    popular authors in news database.'''
     authors_query='''select name, sum(rslt_two.count) as num
         from (select author, rslt.count from (
         select path, count(path) from (
@@ -34,6 +39,8 @@ def popularAuthors(query):
     print("-" * 80)
 
 def errorDays(query):
+    '''This method prints days on which more than
+        1% requests lead to error in news database.'''
     error_query = '''select response.day, (response.failed::decimal/response.total)*100
         as error from (
         select a.day, a.count as failed, b.count as total from (
