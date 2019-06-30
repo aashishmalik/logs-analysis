@@ -3,7 +3,7 @@
 import psycopg2
 
 
-def popularArticles(query)
+def popularArticles(query):
     article_query='''select title, rslt.count from (
         select path, count(path) from (
             select * from log where status = '200 OK' and path != '/'
@@ -17,7 +17,7 @@ def popularArticles(query)
         print("{} - {} views ".format(name,count))
     print("-" * 80)
 
- def popularAuthors(query)
+def popularAuthors(query):
     authors_query='''select name, sum(rslt_two.count) as num
         from (select author, rslt.count from (
         select path, count(path) from (
@@ -33,6 +33,20 @@ def popularArticles(query)
         print("    {} - {} views".format(name, count))
     print("-" * 80)
 
+def errorDays(query):
+    error_query = '''select response.day, (response.failed::decimal/response.total)*100
+        as error from (
+        select a.day, a.count as failed, b.count as total from (
+            select time::date as day, count(status) from log group by day
+            ) as b join (
+            select time::date as day, count(status) from log
+            group by day, status having status != '200 OK'
+            ) as a on a.day = b.day
+        ) as response where (response.failed::decimal/response.total)*100 > 1;'''
+    query.execute(error_query)
+    for (date, percent) in cur.fetchall():
+        print("    {} - {} percent".format(date, round(percent, 2)))
+    print("-" * 80)
 
 
 
