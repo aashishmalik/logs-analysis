@@ -13,3 +13,5 @@ if __name__=="__main__"
         print("Days in which more than 1% of requests lead to errors: \n")
         errorDays(query)
         db.close()
+    except psycopg2.DatabaseError, e:
+        print(e)
