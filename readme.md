@@ -19,7 +19,7 @@ Use `vagrant up` to bring the virtual machine online and `vagrant ssh` to login.
 
 5. Create the Views given below. Then exit `psql`.
 
-6. Now execute the Python file - `python logs_analysis.py`.
+6. Now execute the Python file - `python solution_sql.py`.
 
 ## Example
 
