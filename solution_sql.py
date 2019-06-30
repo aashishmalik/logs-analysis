@@ -17,7 +17,7 @@ def popularArticles(query):
         rslt.count desc;'''
     query.execute(article_query)
     for (name,count) in query.fetchall():
-        print("{} - {} views ".format(name,count))
+        print("* {} - {} views ".format(name,count))
     print("-" * 80)
 
 def popularAuthors(query):
@@ -35,7 +35,7 @@ def popularAuthors(query):
         group by name order by num desc;'''
     query.execute(authors_query)
     for (name, count) in query.fetchall():
-        print("    {} - {} views".format(name, count))
+        print("* {} - {} views".format(name, count))
     print("-" * 80)
 
 def errorDays(query):
@@ -51,13 +51,13 @@ def errorDays(query):
             ) as a on a.day = b.day
         ) as response where (response.failed::decimal/response.total)*100 > 1;'''
     query.execute(error_query)
-    for (date, percent) in cur.fetchall():
-        print("    {} - {} percent".format(date, round(percent, 2)))
+    for (date, percent) in query.fetchall():
+        print("* {} - {} percent".format(date, round(percent, 2)))
     print("-" * 80)
 
 
 
-if __name__=="__main__"
+if __name__=="__main__":
     try:
         db=psycopg2.connect(database="news")
         query=db.cursor()
