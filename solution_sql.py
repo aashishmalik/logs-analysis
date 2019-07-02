@@ -2,12 +2,13 @@
 
 import psycopg2
 
-#query is the cursor object of database
+
+# query is the cursor object of database
 def popularArticles(query):
     '''This method prints list of most
     popular articles in news database.'''
-    
-    article_query='''select title, rslt.count from (
+
+    article_query = '''select title, rslt.count from (
         select path, count(path) from (
             select * from log where status = '200 OK' and path != '/'
             ) as tbl
@@ -16,14 +17,15 @@ def popularArticles(query):
         join articles on rslt.path like '%' || slug || '%' order by
         rslt.count desc;'''
     query.execute(article_query)
-    for (name,count) in query.fetchall():
-        print("* {} - {} views ".format(name,count))
+    for (name, count) in query.fetchall():
+        print("* {} - {} views ".format(name, count))
     print("-" * 80)
+
 
 def popularAuthors(query):
     '''This method prints list of most
     popular authors in news database.'''
-    authors_query='''select name, sum(rslt_two.count) as num
+    authors_query = '''select name, sum(rslt_two.count) as num
         from (select author, rslt.count from (
         select path, count(path) from (
             select * from log where status = '200 OK' and path != '/'
@@ -38,6 +40,7 @@ def popularAuthors(query):
         print("* {} - {} views".format(name, count))
     print("-" * 80)
 
+
 def errorDays(query):
     '''This method prints days on which more than
         1% requests lead to error in news database.'''
@@ -49,18 +52,18 @@ def errorDays(query):
             select time::date as day, count(status) from log
             group by day, status having status != '200 OK'
             ) as a on a.day = b.day
-        ) as response where (response.failed::decimal/response.total)*100 > 1;'''
+        ) as response where
+        (response.failed::decimal/response.total)*100 > 1;'''
     query.execute(error_query)
     for (date, percent) in query.fetchall():
         print("* {} - {} percent".format(date, round(percent, 2)))
     print("-" * 80)
 
 
-
-if __name__=="__main__":
+if __name__ == "__main__":
     try:
-        db=psycopg2.connect(database="news")
-        query=db.cursor()
+        db = psycopg2.connect(database="news")
+        query = db.cursor()
         print("The list of most famous articles are as follows : \n")
         popularArticles(query)
         print("The most Popular Authors are: \n")
@@ -68,5 +71,5 @@ if __name__=="__main__":
         print("Days in which more than 1% of requests lead to errors: \n")
         errorDays(query)
         db.close()
-    except psycopg2.DatabaseError, e:
+    except psycopg2.DatabaseError as e:
         print(e)
